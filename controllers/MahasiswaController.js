@@ -17,7 +17,7 @@ module.exports = {
             };
 
             if(!isEmail(mahasiswa.email)){
-                return res.status(404).json({
+                return res.status(422).json({
                     status: 'error',
                     message: 'Please fill a valid email address',
                 });
@@ -25,7 +25,7 @@ module.exports = {
 
             const emailExist = await Mahasiswa.findOne({ email: mahasiswa.email });
             if(emailExist){
-                return res.status(404).json({
+                return res.status(409).json({
                     status: 'error',
                     message: 'Email already exist',
                 });
@@ -41,7 +41,7 @@ module.exports = {
                 .has().symbols(1)
 
             if(!schema.validate(mahasiswa.password)){
-                return res.status(404).json({
+                return res.status(422).json({
                     status: 'error',
                     message: 'Password must required one upper case, one digit, one symbols and maximun 20 characters',
                 });
