@@ -1,5 +1,5 @@
 const { isEmail } = require('validator')
-// const { passwordValidator }  = require('password-validator');
+const passwordValidator  = require('password-validator');
 const bcrypt = require("bcrypt")
 
 const Mahasiswa = require('../models/Mahasiswa')
@@ -23,24 +23,29 @@ module.exports = {
                 });
             }
 
-            // const schema = new passwordValidator();
-            // schema
-            //     .is().min(8)
-            //     .is().max(20)
-            //     .has().uppercase() 
-            //     .has().lowercase()
-            //     .has().digits(1)
-            //     .has().symbols(1)
+            const emailExist = await Mahasiswa.findOne({ email: mahasiswa.email });
+            if(emailExist){
+                return res.status(404).json({
+                    status: 'error',
+                    message: 'Email already exist',
+                });
+            }
 
-            // if(!schema.validate(mahasiswa.password)){
-            //     return res.status(404).json({
-            //         status: 'error',
-            //         message: 'Password must required one upper case, one digit, one symbols and maximun 20 characters',
-            //     });
-            // }
-            // else {
-            //     mahasiswa.password = bcrypt.hash(mahasiswa.password)
-            // }
+            const schema = new passwordValidator();
+            schema
+                .is().min(8)
+                .is().max(20)
+                .has().uppercase() 
+                .has().lowercase()
+                .has().digits(1)
+                .has().symbols(1)
+
+            if(!schema.validate(mahasiswa.password)){
+                return res.status(404).json({
+                    status: 'error',
+                    message: 'Password must required one upper case, one digit, one symbols and maximun 20 characters',
+                });
+            }
 
             const data = await Mahasiswa.create(mahasiswa);
 
